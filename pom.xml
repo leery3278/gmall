@@ -18,6 +18,11 @@
 	<modules>
 		<module>gmall-core</module>
 		<module>gmall-admin</module>
+		<module>gmall-pms</module>
+		<module>gmall-oms</module>
+		<module>gmall-ums</module>
+		<module>gmall-sms</module>
+		<module>gmall-wms</module>
         
     </modules>
 
