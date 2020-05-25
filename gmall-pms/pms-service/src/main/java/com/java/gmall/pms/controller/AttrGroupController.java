@@ -30,6 +30,13 @@ public class AttrGroupController {
     @Autowired
     private AttrGroupService attrGroupService;
 
+    @ApiOperation("查询分类下的组及规格参数")
+    @GetMapping("withattrs/cat/{catId}")
+    public Resp<List<GroupVO>> queryByCatId(@PathVariable("catId") Long catId) {
+        List<GroupVO> groupVOList = this.attrGroupService.queryByCatId(catId);
+        return Resp.ok(groupVOList);
+    }
+
     @ApiOperation("根据分组id查询分组及组下的规格参数")
     @GetMapping("withattr/{gid}")
     public Resp<GroupVO> queryById(@PathVariable("gid") Long gid) {

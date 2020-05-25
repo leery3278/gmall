@@ -1,39 +1,30 @@
 package com.java.gmall.pms.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.java.gmall.pms.dao.AttrAttrgroupRelationDao;
-import com.java.gmall.pms.dao.AttrDao;
-import com.java.gmall.pms.dao.AttrGroupDao;
-import com.java.gmall.pms.entity.Attr;
-import com.java.gmall.pms.entity.AttrAttrgroupRelation;
-import com.java.gmall.pms.entity.AttrGroup;
-import com.java.gmall.pms.service.AttrAttrgroupRelationService;
-import com.java.gmall.pms.service.AttrGroupService;
-import com.java.gmall.pms.service.AttrService;
-import com.java.gmall.pms.vo.GroupVO;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.java.core.bean.PageVo;
 import com.java.core.bean.Query;
 import com.java.core.bean.QueryCondition;
-
+import com.java.gmall.pms.dao.AttrAttrgroupRelationDao;
+import com.java.gmall.pms.dao.AttrDao;
+import com.java.gmall.pms.dao.AttrGroupDao;
+import com.java.gmall.pms.entity.Attr;
+import com.java.gmall.pms.entity.AttrAttrgroupRelation;
+import com.java.gmall.pms.entity.AttrGroup;
+import com.java.gmall.pms.service.AttrGroupService;
+import com.java.gmall.pms.vo.GroupVO;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @Service("attrGroupService")
 public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroup> implements AttrGroupService {
-    @Autowired
-    private AttrAttrgroupRelationService attrAttrgroupRelationService;
-    @Autowired
-    private AttrService attrService;
 
     @Override
     public PageVo queryPage(QueryCondition params) {
@@ -91,5 +82,33 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroup> i
         return attrGroupVO;
     }
 
+    @Override
+    public List<GroupVO> queryByCatId(Long catId) {
+        // 构造查询条件
+        QueryWrapper<AttrGroup> wrapper = new QueryWrapper<>();
+        wrapper.eq("catelog_id",catId);
+        List<AttrGroup> attrGroups = attrGroupDao.selectList(wrapper);
+        List<GroupVO> groupVOList = new ArrayList<>();
+        for(GroupVO groupVO:groupVOList) {
+            for(AttrGroup attrGroup:attrGroups) {
+                BeanUtils.copyProperties(attrGroup, groupVO);
+                // 查询分组下的关联关系
+                List<AttrAttrgroupRelation> relations = attrAttrgroupRelationDao.selectList(new
+                        QueryWrapper<AttrAttrgroupRelation>().
+                        eq("attr_group_id", attrGroup.getAttrGroupId()));
+                // 收集分组下的所有规格id
+                List<Long> attrIds = new ArrayList<>();
+                for(AttrAttrgroupRelation relation:relations) {
+                    Long attrId = relation.getAttrId();
+                    attrIds.add(attrId);
+                }
+                // 查询分组下的所有规格参数
+                List<Attr> attrEntities = attrDao.selectBatchIds(attrIds);
+                groupVO.setAttrEntities(attrEntities);
+            }
+        }
+        return groupVOList;
+
+    }
 
 }
