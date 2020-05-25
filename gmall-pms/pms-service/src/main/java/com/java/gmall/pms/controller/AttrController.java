@@ -30,6 +30,7 @@ public class AttrController {
 	@Autowired
 	private AttrService attrService;
 
+	@ApiOperation("查询分类下的规格参数")
 	@GetMapping
 	public Resp<PageVo> queryAttrByCidAndType(QueryCondition queryCondition, @RequestParam("cid") Long cid, @RequestParam("type") Integer type) {
 		PageVo page = attrService.queryAttrByCidAndType(queryCondition, cid, type);

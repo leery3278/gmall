@@ -1,6 +1,8 @@
 package com.java.gmall.pms.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.java.gmall.pms.dao.AttrAttrgroupRelationDao;
+import com.java.gmall.pms.dao.AttrDao;
 import com.java.gmall.pms.dao.AttrGroupDao;
 import com.java.gmall.pms.entity.Attr;
 import com.java.gmall.pms.entity.AttrAttrgroupRelation;
@@ -21,64 +23,73 @@ import com.java.core.bean.QueryCondition;
 
 import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 
 @Service("attrGroupService")
 public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroup> implements AttrGroupService {
+    @Autowired
+    private AttrAttrgroupRelationService attrAttrgroupRelationService;
+    @Autowired
+    private AttrService attrService;
+
+    @Override
+    public PageVo queryPage(QueryCondition params) {
+        IPage<AttrGroup> page = this.page(
+                new Query<AttrGroup>().getPage(params),
+                new QueryWrapper<>()
+        );
+
+        return new PageVo(page);
+    }
+
+    @Override
+    public PageVo queryGroupByPage(QueryCondition queryCondition, Long catId) {
+        IPage<AttrGroup> page = this.page(
+                new Query<AttrGroup>().getPage(queryCondition),
+                new QueryWrapper<AttrGroup>().eq("catelog_id", catId)
+        );
+
+        return new PageVo(page);
+    }
+
+    @Autowired
+    private AttrGroupDao attrGroupDao;
+
+    @Autowired
+    private AttrAttrgroupRelationDao attrAttrgroupRelationDao;
+
 	@Autowired
-	private AttrAttrgroupRelationService attrAttrgroupRelationService;
-	@Autowired
-	private AttrService attrService;
+	private AttrDao attrDao;
 
-	@Override
-	public PageVo queryPage(QueryCondition params) {
-		IPage<AttrGroup> page = this.page(
-				new Query<AttrGroup>().getPage(params),
-				new QueryWrapper<>()
-		);
+    @Override
+    public GroupVO queryGroupByGid(Long gid) {
+        // 查询分组
+        GroupVO attrGroupVO = new GroupVO();
+        AttrGroup attrGroup = attrGroupDao.selectById(gid);
+        BeanUtils.copyProperties(attrGroup, attrGroupVO);
 
-		return new PageVo(page);
-	}
-
-	@Override
-	public PageVo queryGroupByPage(QueryCondition queryCondition, Long catId) {
-		IPage<AttrGroup> page = this.page(
-				new Query<AttrGroup>().getPage(queryCondition),
-				new LambdaQueryWrapper<AttrGroup>().eq(catId != null, AttrGroup::getCatelogId, catId)
-		);
-
-		return new PageVo(page);
-	}
-
-	@Override
-	public GroupVO queryGroupByGid(Long gid) {
-		AttrGroup attrGroup = this.baseMapper.selectById(gid);
-		GroupVO groupVO = new GroupVO();
-		BeanUtils.copyProperties(attrGroup,groupVO);
-		// 查询中间表
-		List<AttrAttrgroupRelation> relations = attrAttrgroupRelationService.list(new LambdaQueryWrapper<AttrAttrgroupRelation>().eq(AttrAttrgroupRelation::getAttrGroupId, gid));
-		if (CollectionUtils.isEmpty(relations)) {
-			return groupVO;
+        // 查询分组下的关联关系
+        List<AttrAttrgroupRelation> relations = attrAttrgroupRelationDao.selectList(new
+                QueryWrapper<AttrAttrgroupRelation>().eq("attr_group_id", gid));
+        // 判断关联关系是否为空，如果为空，直接返回
+        if (CollectionUtils.isEmpty(relations)) {
+            return attrGroupVO;
+        }
+        attrGroupVO.setRelations(relations);
+        // 收集分组下的所有规格id
+		List<Long> attrIds = new ArrayList<>();
+		for(AttrAttrgroupRelation relation:relations) {
+			Long attrId = relation.getAttrId();
+			attrIds.add(attrId);
 		}
-		// 获取attrIds
-		List<Long> attrIds = relations.stream().map(AttrAttrgroupRelation::getAttrId).collect(Collectors.toList());
-		// 查询attrs
-		List<Attr> attrs = attrService.list(new LambdaQueryWrapper<Attr>().in(Attr::getAttrId, attrIds));
+		// 查询分组下的所有规格参数
+		List<Attr> attrEntities = attrDao.selectBatchIds(attrIds);
+		attrGroupVO.setAttrEntities(attrEntities);
+        return attrGroupVO;
+    }
 
-		groupVO.setAttrEntities(attrs);
-		groupVO.setRelations(relations);
-		return groupVO;
-	}
-
-	@Override
-	public List<GroupVO> queryByCid(Long cid) {
-		// 查询所有的分组
-		List<AttrGroup> attrGroupEntities = this.list(new QueryWrapper<AttrGroup>().eq("catelog_id", cid));
-
-		// 查询出每组下的规格参数
-		return attrGroupEntities.stream().map(attrGroupEntity -> this.queryGroupByGid(attrGroupEntity.getAttrGroupId())).collect(Collectors.toList());
-	}
 
 }

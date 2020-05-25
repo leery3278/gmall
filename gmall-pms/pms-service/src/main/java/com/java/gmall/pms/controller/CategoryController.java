@@ -39,12 +39,11 @@ public class CategoryController {
 		return ResponseEntity.ok(categoryVOS);
 	}
 
+	@ApiOperation("根据分类等级或者父id查询分类")
 	@GetMapping
 	public Resp<List<Category>> queryCategoryByPidOrLevel(@RequestParam(value = "parentCid", required = false) Long parentCid, @RequestParam(value = "level", defaultValue = "0") Integer level) {
 		// 如果没传level,则level默认=0,即查询全部
-		List<Category> categories = categoryService.list(new LambdaQueryWrapper<Category>()
-				.eq(level != 0, Category::getCatLevel, level)
-				.eq(parentCid != null, Category::getParentCid, parentCid));
+		List<Category> categories = categoryService.queryCategoryByPidOrLevel(parentCid,level);
 		return Resp.ok(categories);
 	}
 

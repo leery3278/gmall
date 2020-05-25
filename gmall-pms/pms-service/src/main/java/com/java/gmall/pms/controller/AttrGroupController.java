@@ -17,11 +17,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 
-
 /**
  * 属性分组
+ *
  * @author jiangli
- * @since  2020-01-10 04:05:29
+ * @since 2020-01-10 04:05:29
  */
 @Api(tags = "属性分组管理")
 @RestController
@@ -30,24 +30,24 @@ public class AttrGroupController {
     @Autowired
     private AttrGroupService attrGroupService;
 
-	@ApiOperation("根据三级分类id查询分组及组下的规格参数")
-	@GetMapping("/withattrs/cat/{catId}")
-	public Resp<List<GroupVO>> queryByCid(@PathVariable("catId")Long cid){
+    @ApiOperation("根据分组id查询分组及组下的规格参数")
+    @GetMapping("withattr/{gid}")
+    public Resp<GroupVO> queryById(@PathVariable("gid") Long gid) {
+        GroupVO attrGroupVO = this.attrGroupService.queryGroupByGid(gid);
+        return Resp.ok(attrGroupVO);
+    }
 
-		List<GroupVO> attrGroupVOs = this.attrGroupService.queryByCid(cid);
-		return Resp.ok(attrGroupVOs);
-	}
-
-	@ApiOperation("维护关联")
-	@GetMapping("/withattr/{gid}")
-	public Resp<GroupVO> queryGroupByGid(@PathVariable("gid")Long gid) {
-		GroupVO groupVO = attrGroupService.queryGroupByGid(gid);
-		return Resp.ok(groupVO);
-	}
-
+    /**
+     * 查询三级分类的分组
+     *
+     * @param queryCondition
+     * @param catId
+     * @return
+     */
+    @ApiOperation("根据三级分类id分页查询")
     @GetMapping("{catId}")
-    public Resp<PageVo> queryGroupByPage(QueryCondition queryCondition,@PathVariable("catId")Long catId) {
-        PageVo page = attrGroupService.queryGroupByPage(queryCondition,catId);
+    public Resp<PageVo> queryGroupByPage(QueryCondition queryCondition, @PathVariable("catId") Long catId) {
+        PageVo page = attrGroupService.queryGroupByPage(queryCondition, catId);
         return Resp.ok(page);
     }
 
@@ -70,8 +70,8 @@ public class AttrGroupController {
     @ApiOperation("详情查询")
     @GetMapping("/info/{attrGroupId}")
     @PreAuthorize("hasAuthority('pms:attrgroup:info')")
-    public Resp<AttrGroup> info(@PathVariable("attrGroupId") Long attrGroupId){
-		AttrGroup attrGroup = attrGroupService.getById(attrGroupId);
+    public Resp<AttrGroup> info(@PathVariable("attrGroupId") Long attrGroupId) {
+        AttrGroup attrGroup = attrGroupService.getById(attrGroupId);
 
         return Resp.ok(attrGroup);
     }
@@ -82,8 +82,8 @@ public class AttrGroupController {
     @ApiOperation("保存")
     @PostMapping("/save")
     @PreAuthorize("hasAuthority('pms:attrgroup:save')")
-    public Resp<Object> save(@RequestBody AttrGroup attrGroup){
-		attrGroupService.save(attrGroup);
+    public Resp<Object> save(@RequestBody AttrGroup attrGroup) {
+        attrGroupService.save(attrGroup);
 
         return Resp.ok(null);
     }
@@ -94,8 +94,8 @@ public class AttrGroupController {
     @ApiOperation("修改")
     @PostMapping("/update")
     @PreAuthorize("hasAuthority('pms:attrgroup:update')")
-    public Resp<Object> update(@RequestBody AttrGroup attrGroup){
-		attrGroupService.updateById(attrGroup);
+    public Resp<Object> update(@RequestBody AttrGroup attrGroup) {
+        attrGroupService.updateById(attrGroup);
 
         return Resp.ok(null);
     }
@@ -106,8 +106,8 @@ public class AttrGroupController {
     @ApiOperation("删除")
     @PostMapping("/delete")
     @PreAuthorize("hasAuthority('pms:attrgroup:delete')")
-    public Resp<Object> delete(@RequestBody Long[] attrGroupIds){
-		attrGroupService.removeByIds(Arrays.asList(attrGroupIds));
+    public Resp<Object> delete(@RequestBody Long[] attrGroupIds) {
+        attrGroupService.removeByIds(Arrays.asList(attrGroupIds));
 
         return Resp.ok(null);
     }

@@ -17,6 +17,14 @@ import java.util.List;
  */
 public interface CategoryService extends IService<Category> {
 
+    /**
+     * 根据分类等级或者父id查询分类
+     * @param parentCid
+     * @param level
+     * @return
+     */
+    List<Category> queryCategoryByPidOrLevel(Long parentCid, Integer level);
+
     PageVo queryPage(QueryCondition params);
 
 	List<CategoryVO> queryCategoryVO(Long pid);

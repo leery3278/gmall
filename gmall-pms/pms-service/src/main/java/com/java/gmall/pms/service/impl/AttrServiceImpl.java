@@ -1,4 +1,5 @@
 package com.java.gmall.pms.service.impl;
+
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.java.gmall.pms.dao.AttrDao;
 import com.java.gmall.pms.entity.Attr;
@@ -19,8 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service("attrService")
 public class AttrServiceImpl extends ServiceImpl<AttrDao, Attr> implements AttrService {
-	@Autowired
-	private AttrAttrgroupRelationService attrAttrgroupRelationService;
+    @Autowired
+    private AttrAttrgroupRelationService attrAttrgroupRelationService;
 
     @Override
     public PageVo queryPage(QueryCondition params) {
@@ -34,25 +35,33 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, Attr> implements AttrS
 
     @Override
     public PageVo queryAttrByCidAndType(QueryCondition queryCondition, Long cid, Integer type) {
-	    IPage<Attr> page = this.page(
-			    new Query<Attr>().getPage(queryCondition),
-			    new LambdaQueryWrapper<Attr>().eq(Attr::getCatelogId,cid).eq(Attr::getAttrType,type)
-	    );
 
-	    return new PageVo(page);
+        // 构建查询条件
+        QueryWrapper<Attr> wrapper = new QueryWrapper<>();
+        wrapper.eq("catelog_id", cid);
+        if (type != null) {
+            wrapper.eq("attr_type", type);
+        }
+
+        IPage<Attr> page = this.page(
+                new Query<Attr>().getPage(queryCondition),
+                wrapper
+        );
+
+        return new PageVo(page);
     }
 
-	@Transactional
-	@Override
-	public void saveAttrVO(AttrVO attrVO) {
-		// 新增规格参数
-		this.baseMapper.insert(attrVO);
+    @Transactional
+    @Override
+    public void saveAttrVO(AttrVO attrVO) {
+        // 新增规格参数
+        this.baseMapper.insert(attrVO);
 
-		// 新增中间表
-		AttrAttrgroupRelation relation = new AttrAttrgroupRelation();
-		relation.setAttrId(attrVO.getAttrId());
-		relation.setAttrGroupId(attrVO.getAttrGroupId());
-		this.attrAttrgroupRelationService.save(relation);
-	}
+        // 新增中间表
+        AttrAttrgroupRelation relation = new AttrAttrgroupRelation();
+        relation.setAttrId(attrVO.getAttrId());
+        relation.setAttrGroupId(attrVO.getAttrGroupId());
+        this.attrAttrgroupRelationService.save(relation);
+    }
 
 }
