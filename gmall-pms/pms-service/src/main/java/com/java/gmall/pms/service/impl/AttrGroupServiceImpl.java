@@ -84,10 +84,11 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroup> i
 
     @Override
     public List<GroupVO> queryByCatId(Long catId) {
-        // 构造查询条件
+        // 查询所有的分组
         QueryWrapper<AttrGroup> wrapper = new QueryWrapper<>();
         wrapper.eq("catelog_id",catId);
         List<AttrGroup> attrGroups = attrGroupDao.selectList(wrapper);
+        // 查询出每组下的规格参数
         List<GroupVO> groupVOList = new ArrayList<>();
         for(GroupVO groupVO:groupVOList) {
             for(AttrGroup attrGroup:attrGroups) {

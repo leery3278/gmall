@@ -32,8 +32,8 @@ public class AttrAttrgroupRelationController {
     private AttrAttrgroupRelationService attrAttrgroupRelationService;
 
 	@PostMapping("/delete/attr")
-	public Resp deleteByAttrGroupIdAndAttrGroupId(@RequestBody List<AttrAttrgroupRelation> relations) {
-		this.attrAttrgroupRelationService.deleteByAttrGroupIdAndAttrGroupId(relations);
+	public Resp deleteByAttrIdAndAttrGroupId(@RequestBody List<AttrAttrgroupRelation> relations) {
+		this.attrAttrgroupRelationService.deleteByAttrIdAndAttrGroupId(relations);
 
 		return Resp.ok("删除成功");
 	}
@@ -58,7 +58,7 @@ public class AttrAttrgroupRelationController {
     @GetMapping("/info/{id}")
     @PreAuthorize("hasAuthority('pms:attrattrgrouprelation:info')")
     public Resp<AttrAttrgroupRelation> info(@PathVariable("id") Long id){
-		AttrAttrgroupRelation attrAttrgroupRelation = attrAttrgroupRelationService.getById(id);
+		AttrAttrgroupRelation attrAttrgroupRelation = attrAttrgroupRelationService.selectById(id);
 
         return Resp.ok(attrAttrgroupRelation);
     }

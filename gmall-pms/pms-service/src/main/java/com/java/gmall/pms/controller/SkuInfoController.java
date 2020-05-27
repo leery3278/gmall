@@ -37,7 +37,8 @@ public class SkuInfoController {
 	@GetMapping("{spuId}")
 	public Resp<List<SkuInfo>> querySkuBySpuId(@PathVariable("spuId")Long spuId){
 
-		List<SkuInfo> skuInfoEntities = this.skuInfoService.list(new QueryWrapper<SkuInfo>().eq("spu_id", spuId));
+//		List<SkuInfo> skuInfoEntities = this.skuInfoService.list(new QueryWrapper<SkuInfo>().eq("spu_id", spuId));
+		List<SkuInfo> skuInfoEntities = this.skuInfoService.querySkuBySpuId(spuId);
 
 		return Resp.ok(skuInfoEntities);
 	}

@@ -18,6 +18,8 @@ public interface AttrAttrgroupRelationService extends IService<AttrAttrgroupRela
 
     PageVo queryPage(QueryCondition params);
 
-	void deleteByAttrGroupIdAndAttrGroupId(List<AttrAttrgroupRelation> relations);
+	void deleteByAttrIdAndAttrGroupId(List<AttrAttrgroupRelation> relations);
+
+    AttrAttrgroupRelation selectById(Long id);
 }
 
