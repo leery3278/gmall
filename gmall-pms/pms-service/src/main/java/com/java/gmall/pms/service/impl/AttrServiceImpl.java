@@ -7,6 +7,7 @@ import com.java.gmall.pms.entity.AttrAttrgroupRelation;
 import com.java.gmall.pms.service.AttrAttrgroupRelationService;
 import com.java.gmall.pms.service.AttrService;
 import com.java.gmall.pms.vo.AttrVO;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -22,6 +23,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class AttrServiceImpl extends ServiceImpl<AttrDao, Attr> implements AttrService {
     @Autowired
     private AttrAttrgroupRelationService attrAttrgroupRelationService;
+
+    @Autowired
+    private AttrDao attrDao;
 
     @Override
     public PageVo queryPage(QueryCondition params) {
@@ -55,13 +59,20 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, Attr> implements AttrS
     @Override
     public void saveAttrVO(AttrVO attrVO) {
         // 新增规格参数
-        this.baseMapper.insert(attrVO);
-
+//        this.baseMapper.insert(attrVO);
+        Attr attr = new Attr();
+        BeanUtils.copyProperties(attrVO, attr);
+        attrDao.insert(attr);
         // 新增中间表
         AttrAttrgroupRelation relation = new AttrAttrgroupRelation();
         relation.setAttrId(attrVO.getAttrId());
         relation.setAttrGroupId(attrVO.getAttrGroupId());
         this.attrAttrgroupRelationService.save(relation);
+    }
+
+    @Override
+    public Attr getByAttrId(Long attrId) {
+        return attrDao.selectById(attrId);
     }
 
 }

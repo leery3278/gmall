@@ -44,7 +44,7 @@ public class AttrController {
 	@ApiOperation("分页查询(排序)")
 	@GetMapping("/list")
 	@PreAuthorize("hasAuthority('pms:attr:list')")
-	public Resp<PageVo> list(QueryCondition queryCondition) {
+	public Resp<PageVo> list(@RequestBody QueryCondition queryCondition) {
 		PageVo page = attrService.queryPage(queryCondition);
 
 		return Resp.ok(page);
@@ -58,7 +58,8 @@ public class AttrController {
 	@GetMapping("/info/{attrId}")
 	@PreAuthorize("hasAuthority('pms:attr:info')")
 	public Resp<Attr> info(@PathVariable("attrId") Long attrId) {
-		Attr attr = attrService.getById(attrId);
+//		Attr attr = attrService.getById(attrId);
+		Attr attr = attrService.getByAttrId(attrId);
 
 		return Resp.ok(attr);
 	}
