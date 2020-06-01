@@ -24,7 +24,8 @@
 		<module>gmall-sms</module>
 		<module>gmall-wms</module>
 		<module>gmall-gateway</module>
-        
+		<module>gmall-search</module>
+
     </modules>
 
 
