@@ -34,6 +34,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, Category> impl
         if (level != 0) {
             wrapper.eq("cat_level", level);
         }
+
         return categoryDao.selectList(wrapper);
     }
 

@@ -42,7 +42,6 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroup> i
                 new Query<AttrGroup>().getPage(queryCondition),
                 new QueryWrapper<AttrGroup>().eq("catelog_id", catId)
         );
-
         return new PageVo(page);
     }
 
@@ -57,29 +56,26 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroup> i
 
     @Override
     public GroupVO queryGroupByGid(Long gid) {
+        GroupVO groupVO = new GroupVO();
         // 查询分组
-        GroupVO attrGroupVO = new GroupVO();
         AttrGroup attrGroup = attrGroupDao.selectById(gid);
-        BeanUtils.copyProperties(attrGroup, attrGroupVO);
-
+        BeanUtils.copyProperties(attrGroup, groupVO);
         // 查询分组下的关联关系
-        List<AttrAttrgroupRelation> relations = attrAttrgroupRelationDao.selectList(new
-                QueryWrapper<AttrAttrgroupRelation>().eq("attr_group_id", gid));
+        List<AttrAttrgroupRelation> relations = attrAttrgroupRelationDao.
+                selectList(new QueryWrapper<AttrAttrgroupRelation>().eq("attr_group_id",gid));
         // 判断关联关系是否为空，如果为空，直接返回
-        if (CollectionUtils.isEmpty(relations)) {
-            return attrGroupVO;
+        if(CollectionUtils.isEmpty(relations)) {
+            return groupVO;
         }
-        attrGroupVO.setRelations(relations);
+        groupVO.setRelations(relations);
         // 收集分组下的所有规格id
-		List<Long> attrIds = new ArrayList<>();
-		for(AttrAttrgroupRelation relation:relations) {
-			Long attrId = relation.getAttrId();
-			attrIds.add(attrId);
-		}
-		// 查询分组下的所有规格参数
-		List<Attr> attrEntities = attrDao.selectBatchIds(attrIds);
-		attrGroupVO.setAttrEntities(attrEntities);
-        return attrGroupVO;
+        List<Long> attrIds = new ArrayList<>();
+        for(AttrAttrgroupRelation attrAttrgroupRelation:relations) {
+            attrIds.add(attrAttrgroupRelation.getAttrId());
+        }
+        List<Attr> attrEntities = attrDao.selectBatchIds(attrIds);
+        groupVO.setAttrEntities(attrEntities);
+        return groupVO;
     }
 
     @Override
@@ -90,23 +86,9 @@ public class AttrGroupServiceImpl extends ServiceImpl<AttrGroupDao, AttrGroup> i
         List<AttrGroup> attrGroups = attrGroupDao.selectList(wrapper);
         // 查询出每组下的规格参数
         List<GroupVO> groupVOList = new ArrayList<>();
-        for(GroupVO groupVO:groupVOList) {
-            for(AttrGroup attrGroup:attrGroups) {
-                BeanUtils.copyProperties(attrGroup, groupVO);
-                // 查询分组下的关联关系
-                List<AttrAttrgroupRelation> relations = attrAttrgroupRelationDao.selectList(new
-                        QueryWrapper<AttrAttrgroupRelation>().
-                        eq("attr_group_id", attrGroup.getAttrGroupId()));
-                // 收集分组下的所有规格id
-                List<Long> attrIds = new ArrayList<>();
-                for(AttrAttrgroupRelation relation:relations) {
-                    Long attrId = relation.getAttrId();
-                    attrIds.add(attrId);
-                }
-                // 查询分组下的所有规格参数
-                List<Attr> attrEntities = attrDao.selectBatchIds(attrIds);
-                groupVO.setAttrEntities(attrEntities);
-            }
+        for(AttrGroup attrGroup:attrGroups) {
+           GroupVO groupVO = this.queryGroupByGid(attrGroup.getAttrGroupId());
+           groupVOList.add(groupVO);
         }
         return groupVOList;
 

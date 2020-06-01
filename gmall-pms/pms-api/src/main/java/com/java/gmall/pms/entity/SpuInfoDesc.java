@@ -23,7 +23,7 @@ public class SpuInfoDesc implements Serializable {
 	/**
 	 * 商品id
 	 */
-	@TableId(type = IdType.INPUT)
+	@TableId(value = "spu_id",type = IdType.INPUT)
 	@ApiModelProperty(name = "spuId",value = "商品id")
 	private Long spuId;
 	/**

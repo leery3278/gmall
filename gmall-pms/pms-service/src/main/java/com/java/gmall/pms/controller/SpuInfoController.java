@@ -81,7 +81,7 @@ public class SpuInfoController {
      */
     @ApiOperation("保存")
     @PostMapping("/save")
-    @PreAuthorize("hasAuthority('pms:spuinfo:save')")
+//    @PreAuthorize("hasAuthority('pms:spuinfo:save')")
     public Resp<Object> save(@RequestBody SpuInfoVO spuInfoVO){
 	    spuInfoService.saveSpuInfoVO(spuInfoVO);
 
