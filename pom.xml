@@ -25,7 +25,7 @@
 		<module>gmall-wms</module>
 		<module>gmall-gateway</module>
 		<module>gmall-search</module>
-
+		<module>gmall-index</module>
     </modules>
 
 

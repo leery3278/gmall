@@ -1,6 +1,6 @@
 spring:
   application:
-    name: gmall-search
+    name: gmall-index
   cloud:
     nacos:
       config:
