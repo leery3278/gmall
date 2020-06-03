@@ -32,7 +32,6 @@ public class MemberController {
 	@GetMapping("check/{data}/{type}")
 	public Resp<Boolean> checkData(@PathVariable("data") String data, @PathVariable("type") Integer type) {
 		Boolean b = this.memberService.checkData(data, type);
-
 		return Resp.ok(b);
 	}
 

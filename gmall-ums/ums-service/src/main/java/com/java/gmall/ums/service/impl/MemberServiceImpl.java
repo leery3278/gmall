@@ -33,7 +33,9 @@ public class MemberServiceImpl extends ServiceImpl<MemberDao, Member> implements
 	@Override
 	public Boolean checkData(String data, Integer type) {
 		QueryWrapper<Member> wrapper = new QueryWrapper<>();
-		switch (type) {
+		wrapper.eq("username", data).or().eq("mobile", data).
+				or().eq("email", data);
+		/*switch (type) {
 			case 1:
 				wrapper.eq("username", data);
 				break;
@@ -45,7 +47,7 @@ public class MemberServiceImpl extends ServiceImpl<MemberDao, Member> implements
 				break;
 			default:
 				return false;
-		}
+		}*/
 		return this.baseMapper.selectCount(wrapper) == 0;
 	}
 
