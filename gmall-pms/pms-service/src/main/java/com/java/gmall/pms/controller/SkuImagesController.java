@@ -37,9 +37,8 @@ public class SkuImagesController {
 	 * 根据skuId查询sku图片列表
 	 */
 	@GetMapping("{skuId}")
-	public List<String> querySkuImagesBySkuId(@PathVariable("skuId") Long skuId) {
-		List<SkuImages> list = skuImagesService.list(new LambdaQueryWrapper<SkuImages>().eq(SkuImages::getSkuId, skuId));
-		return list.stream().map(SkuImages::getImgUrl).collect(Collectors.toList());
+	public List<SkuImages> querySkuImagesBySkuId(@PathVariable("skuId") Long skuId) {
+	    return skuImagesService.querySkuImagesBySkuId(skuId);
 	}
 
 

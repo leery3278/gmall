@@ -26,6 +26,7 @@
 		<module>gmall-gateway</module>
 		<module>gmall-search</module>
 		<module>gmall-index</module>
+		<module>gmall-item</module>
     </modules>
 
 
