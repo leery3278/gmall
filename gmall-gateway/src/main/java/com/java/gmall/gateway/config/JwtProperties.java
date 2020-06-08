@@ -8,8 +8,8 @@ import javax.annotation.PostConstruct;
 import java.io.File;
 import java.security.PublicKey;
 
-//@ConfigurationProperties(prefix = "gmall.jwt")
-//@Component
+@ConfigurationProperties(prefix = "gmall.jwt")
+@Component
 public class JwtProperties {
 
     private String pubKeyPath;// 公钥文件地址

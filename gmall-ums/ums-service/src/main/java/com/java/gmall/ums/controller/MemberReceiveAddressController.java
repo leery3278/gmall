@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.java.core.bean.PageVo;
 import com.java.core.bean.QueryCondition;
 import com.java.core.bean.Resp;
@@ -34,7 +35,8 @@ public class MemberReceiveAddressController {
 	 */
 	@GetMapping("{userId}")
 	public ResponseEntity<List<MemberReceiveAddress>> queryMemberReceiveAddressByUserId(@PathVariable("userId") Long userId) {
-		List<MemberReceiveAddress> memberReceiveAddresses = memberReceiveAddressService.list(new LambdaQueryWrapper<MemberReceiveAddress>().eq(MemberReceiveAddress::getMemberId, userId));
+//		List<MemberReceiveAddress> memberReceiveAddresses = memberReceiveAddressService.list(new LambdaQueryWrapper<MemberReceiveAddress>().eq(MemberReceiveAddress::getMemberId, userId));
+		List<MemberReceiveAddress> memberReceiveAddresses = memberReceiveAddressService.list(new QueryWrapper<MemberReceiveAddress>().eq("member_id",userId));
 		return ResponseEntity.ok(memberReceiveAddresses);
 	}
 

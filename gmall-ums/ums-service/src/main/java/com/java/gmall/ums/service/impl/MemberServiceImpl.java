@@ -13,6 +13,7 @@ import com.java.core.bean.QueryCondition;
 import com.java.gmall.ums.dao.MemberDao;
 import com.java.gmall.ums.entity.Member;
 import com.java.gmall.ums.service.MemberService;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.Date;
 import java.util.UUID;

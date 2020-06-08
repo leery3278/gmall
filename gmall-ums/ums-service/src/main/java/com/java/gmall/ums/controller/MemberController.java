@@ -39,7 +39,7 @@ public class MemberController {
 	 * 注册
 	 */
 	@PostMapping("register")
-	public Resp<Object> register(Member member, @RequestParam("code") String code) {
+	public Resp<Object> register(@RequestBody Member member, @RequestParam("code") String code) {
 		this.memberService.register(member, code);
 
 		return Resp.ok(null);
