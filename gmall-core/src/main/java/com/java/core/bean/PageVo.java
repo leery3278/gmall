@@ -61,6 +61,4 @@ public class PageVo<T> implements Serializable {
 		this.totalPage = (int)page.getPages();
 	}
 
-
-	
 }

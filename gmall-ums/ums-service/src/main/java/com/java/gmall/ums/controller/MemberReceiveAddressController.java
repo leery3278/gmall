@@ -34,10 +34,10 @@ public class MemberReceiveAddressController {
 	 * 根据用户id查询收货地址
 	 */
 	@GetMapping("{userId}")
-	public ResponseEntity<List<MemberReceiveAddress>> queryMemberReceiveAddressByUserId(@PathVariable("userId") Long userId) {
+	public Resp<List<MemberReceiveAddress>> queryMemberReceiveAddressByUserId(@PathVariable("userId") Long userId) {
 //		List<MemberReceiveAddress> memberReceiveAddresses = memberReceiveAddressService.list(new LambdaQueryWrapper<MemberReceiveAddress>().eq(MemberReceiveAddress::getMemberId, userId));
 		List<MemberReceiveAddress> memberReceiveAddresses = memberReceiveAddressService.list(new QueryWrapper<MemberReceiveAddress>().eq("member_id",userId));
-		return ResponseEntity.ok(memberReceiveAddresses);
+		return Resp.ok(memberReceiveAddresses);
 	}
 
     /**
